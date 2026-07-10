@@ -8,11 +8,21 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        proxy: {
+          '/api/yahoo': {
+            target: 'https://query1.finance.yahoo.com',
+            changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/api\/yahoo/, ''),
+            headers: {
+              'User-Agent': 'Mozilla/5.0',
+            },
+          },
+        },
       },
       plugins: [react()],
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        'process.env.OPENROUTER_API_KEY': JSON.stringify(env.OPENROUTER_API_KEY),
+        'process.env.NVIDIA_API_KEY': JSON.stringify(env.NVIDIA_API_KEY)
       },
       resolve: {
         alias: {

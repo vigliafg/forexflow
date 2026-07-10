@@ -1,27 +1,17 @@
-import { GoogleGenAI } from "@google/genai";
 import { AnalysisReport } from "../types";
 
-export const getMarketAnalysis = async (report: AnalysisReport): Promise<string> => {
-  if (!process.env.API_KEY) {
-    console.error("API Key not found");
-    return "Errore: API Key mancante. Assicurati che process.env.API_KEY sia impostato.";
-  }
-
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-  // Map timeframe to readable string
+export const buildAnalysisPrompt = (report: AnalysisReport): string => {
   const timeframeMap: Record<string, string> = {
-      '15m': '15 Minuti (Intraday Scalping)',
-      '1h': '1 Ora (Intraday)',
-      '1d': 'Giornaliero (Swing Trading)',
-      '1w': 'Settimanale (Trend Lungo)',
-      '1mo': 'Mensile (Macro Trend)'
+    '15m': '15 Minuti (Intraday Scalping)',
+    '1h':  '1 Ora (Intraday)',
+    '1d':  'Giornaliero (Swing Trading)',
+    '1w':  'Settimanale (Trend Lungo)',
+    '1mo': 'Mensile (Macro Trend)'
   };
-  
+
   const tfLabel = timeframeMap[report.timeframe] || report.timeframe;
 
-  // Construct a prompt in Italian based on the technical data and timeframe
-  const prompt = `
+  return `
     Agisci come un analista tecnico Forex senior spiegando la situazione a un trader. 
     Analizza la coppia EUR/USD sul time frame: ${tfLabel}.
     
@@ -43,16 +33,4 @@ export const getMarketAnalysis = async (report: AnalysisReport): Promise<string>
     
     Rispondi esclusivamente in ITALIANO. Tono professionale ma chiaro. Massimo 180 parole.
   `;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-    });
-    
-    return response.text || "Impossibile generare l'analisi al momento.";
-  } catch (error) {
-    console.error("Gemini API Error:", error);
-    return "Errore di connessione al servizio di analisi AI.";
-  }
 };

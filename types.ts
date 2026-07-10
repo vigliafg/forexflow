@@ -1,7 +1,53 @@
 export type Timeframe = '15m' | '1h' | '1d' | '1w' | '1mo';
 
+// --- LLM Provider Types ---
+
+export type ProviderType = 'openrouter' | 'nvidia';
+
+export interface DiscoveredModel {
+  id: string;
+  name: string;
+  provider: ProviderType;
+  contextLength?: number;
+  description?: string;
+}
+
+export interface LLMProviderConfig {
+  name: string;
+  apiKey: string;
+  model: string;
+  timeoutMs: number;
+  provider: ProviderType;
+  baseUrl?: string;
+}
+
+// --- Active Provider (single, user-selected) ---
+
+export interface ActiveProvider {
+  provider: ProviderType;
+  model: string;
+}
+
+// --- TOML Config Types ---
+
+export interface ForexFlowConfig {
+  config_version: number;
+  api_keys: {
+    openrouter: string;
+    nvidia: string;
+  };
+  active_provider: ActiveProvider;
+  provider_models: {
+    openrouter: string[];
+    nvidia: string[];
+  };
+  setup_completed: boolean;
+}
+
+// --- Market Data ---
+
 export interface Candle {
-  time: string; // ISO string
+  time: string;
   open: number;
   high: number;
   low: number;
@@ -23,19 +69,19 @@ export interface TechnicalSignal {
 }
 
 export interface ForecastPoint {
-  period: number; // 1, 2, 3 periods ahead
+  period: number;
   price: number;
   rangeLow: number;
   rangeHigh: number;
-  probability: number; // 0-100%
+  probability: number;
 }
 
 export interface ForecastModelResult {
   modelName: string;
-  forecasts: ForecastPoint[]; // Forecasts for t+1, t+2, t+3
+  forecasts: ForecastPoint[];
   methodology: string;
   color: string;
-  backtestAccuracy: number; // Simulated historical accuracy over 3 years
+  backtestAccuracy: number;
 }
 
 export interface AnalysisReport {
@@ -44,5 +90,5 @@ export interface AnalysisReport {
   timeframe: string;
   signals: TechnicalSignal[];
   forecasts: ForecastModelResult[];
-  backtestAccuracy: number; // Simulated historical accuracy
+  backtestAccuracy: number;
 }
