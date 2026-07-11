@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 .env
+.env.*
+!.env.example
+
+# Configuration files (may contain API keys)
+forexflow.cfg
 
 # Editor directories and files
 .vscode/*
@@ -23,4 +28,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-forexflow.cfg
+
+# OS-generated files
+Thumbs.db
+*.tmp
+*~
